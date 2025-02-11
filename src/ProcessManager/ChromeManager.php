@@ -138,7 +138,15 @@ final class ChromeManager implements BrowserManagerInterface
             $this->options['chromedriver_arguments']
         );
 
-        return new Process($command, null, null, null, null);
+        $env = [];
+        if (!empty($this->options['proxychain'])) {
+            $env = [
+                'LD_PRELOAD' => '/usr/lib/libproxychains4.so',
+                'PROXYCHAINS_CONF_FILE' => $this->options['proxychain'],
+            ];
+        }
+
+        return new Process($command, null, $env, null, null);
     }
 
     private function getDefaultOptions(): array
